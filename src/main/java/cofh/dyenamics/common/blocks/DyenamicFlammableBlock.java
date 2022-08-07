@@ -1,10 +1,10 @@
 package cofh.dyenamics.common.blocks;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class DyenamicFlammableBlock extends Block {
 
@@ -20,20 +20,19 @@ public class DyenamicFlammableBlock extends Block {
 		this.encouragement = encouragementIn;
 		this.flammability = flammabilityIn;
 	}
-	
+
 	@Override
-	public boolean isFlammable(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
+	public boolean isFlammable(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
 		return true;
 	}
-	
+
 	@Override
-	public int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face)
-    {
-        return encouragement;
-    }
-	
+	public int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+		return encouragement;
+	}
+
 	@Override
-	public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face)
+	public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face)
     {
         return flammability;
     }

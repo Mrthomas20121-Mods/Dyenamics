@@ -6,11 +6,11 @@ import java.util.Map;
 import cofh.dyenamics.Dyenamics;
 import cofh.dyenamics.common.items.DyenamicDyeItem;
 import cofh.dyenamics.core.util.DyenamicDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class ItemInit {
 
@@ -19,8 +19,8 @@ public class ItemInit {
 	
 	public synchronized static void register() {
 		for (DyenamicDyeColor color : DyenamicDyeColor.dyenamicValues()) {
-			String colorName = color.getString();
-			DYE_ITEMS.put(colorName + "_dye", ITEMS.register(colorName + "_dye", () -> new DyenamicDyeItem(color, new Item.Properties().group(ItemGroup.MISC))));
+			String colorName = color.getSerializedName();
+			DYE_ITEMS.put(colorName + "_dye", ITEMS.register(colorName + "_dye", () -> new DyenamicDyeItem(color, new Item.Properties().tab(CreativeModeTab.TAB_MISC))));
 		}
 	}
 	

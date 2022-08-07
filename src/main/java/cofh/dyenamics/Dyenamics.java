@@ -1,11 +1,11 @@
 package cofh.dyenamics;
 
 import cofh.dyenamics.core.util.DyenamicDyeColor;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -48,10 +48,10 @@ public class Dyenamics
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
-        RenderingRegistry.registerEntityRenderingHandler(EntityInit.SHEEP.get(), DyenamicSheepRenderer::new);
+        EntityRenderers.register(EntityInit.SHEEP.get(), DyenamicSheepRenderer::new);
         for (DyenamicDyeColor color : DyenamicDyeColor.dyenamicValues()) {
-	        RenderTypeLookup.setRenderLayer(BlockInit.DYED_BLOCKS.get(color.getString()).get("stained_glass").get(), RenderType.getTranslucent());
-	        RenderTypeLookup.setRenderLayer(BlockInit.DYED_BLOCKS.get(color.getString()).get("stained_glass_pane").get(), RenderType.getTranslucent());
+	        ItemBlockRenderTypes.setRenderLayer(BlockInit.DYED_BLOCKS.get(color.getSerializedName()).get("stained_glass").get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.DYED_BLOCKS.get(color.getSerializedName()).get("stained_glass_pane").get(), RenderType.translucent());
         }
     }
 }

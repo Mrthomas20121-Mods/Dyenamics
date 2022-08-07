@@ -2,17 +2,21 @@ package cofh.dyenamics.common.items;
 
 import com.google.common.collect.Maps;
 
-import cofh.dyenamics.common.entities.DyenamicSheepEntity;
+import cofh.dyenamics.common.entities.DyenamicSheep;
 import cofh.dyenamics.core.util.DyenamicDyeColor;
 
 import java.util.Map;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 public class DyenamicDyeItem extends Item {
    private static final Map<DyenamicDyeColor, DyenamicDyeItem> COLOR_DYE_ITEM_MAP = Maps.newEnumMap(DyenamicDyeColor.class);
@@ -27,28 +31,32 @@ public class DyenamicDyeItem extends Item {
    /**
     * Returns true if the item can be used on the given entity, e.g. shears on sheep.
     */
-   public ActionResultType itemInteractionForEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand) {
-      if (target instanceof DyenamicSheepEntity) {
-    	 DyenamicSheepEntity sheepentity = (DyenamicSheepEntity)target;
-         if (sheepentity.isAlive() && !sheepentity.getSheared() && sheepentity.getDyenamicFleeceColor() != this.dyeColor) {
-            if (!playerIn.world.isRemote) {
-               sheepentity.setFleeceColor(this.dyeColor);
+   @Nonnull
+   @Override
+   public InteractionResult interactLivingEntity(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull LivingEntity target, @Nonnull InteractionHand hand) {
+      if(target instanceof DyenamicSheep dyenamicSheep) {
+         if(dyenamicSheep.isAlive() && !dyenamicSheep.isSheared() && dyenamicSheep.getDyenamicFleeceColor() != this.dyeColor) {
+            dyenamicSheep.level.playSound(player, dyenamicSheep, SoundEvents.DYE_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
+            if (!player.level.isClientSide) {
+               dyenamicSheep.setColor(this.dyeColor);
                stack.shrink(1);
             }
-            return ActionResultType.func_233537_a_(playerIn.world.isRemote);
+
+            return InteractionResult.sidedSuccess(player.level.isClientSide);
          }
       }
-      else if (target instanceof SheepEntity) {
-     	 SheepEntity sheepentity = (SheepEntity)target;
-          if (sheepentity.isAlive() && !sheepentity.getSheared() && sheepentity.getFleeceColor().getId() != this.dyeColor.getId()) {
-             if (!playerIn.world.isRemote) {
-            	DyenamicSheepEntity.convertToDyenamics(sheepentity, dyeColor);
-                stack.shrink(1);
-             }
-             return ActionResultType.func_233537_a_(playerIn.world.isRemote);
-          }
-       }
-      return ActionResultType.PASS;
+      else if (target instanceof Sheep sheep) {
+         if (sheep.isAlive() && !sheep.isSheared() && sheep.getColor().getId() != this.dyeColor.getId()) {
+            sheep.level.playSound(player, sheep, SoundEvents.DYE_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
+            if (!player.level.isClientSide) {
+               DyenamicSheep.convertToDyenamics(sheep, dyeColor);
+               stack.shrink(1);
+            }
+
+            return InteractionResult.sidedSuccess(player.level.isClientSide);
+         }
+      }
+      return InteractionResult.PASS;
    }
 
    public DyenamicDyeColor getDyeColor() {
